@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    {
+      "name": "fmt",
+      "host": true
+    },
+    "cimg"
+  ]
+}
