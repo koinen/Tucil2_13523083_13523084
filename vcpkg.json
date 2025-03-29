@@ -4,6 +4,6 @@
       "name": "fmt",
       "host": true
     },
-    "cimg"
+    "stb"
   ]
 }
