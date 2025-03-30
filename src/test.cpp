@@ -12,5 +12,7 @@ int main() {
     cout << "Image loaded successfully." << endl;
     cout << "Width: " << image.Red().cols() << ", Height: " << image.Red().rows() << endl;
     cout << "Variance Threshold: " << ErrorMeasure::varianceThreshold(image) << endl;
+    cout << "Mean Absolute Deviation Threshold: " << ErrorMeasure::meanAbsoluteDeviationThreshold(image) << endl;
+    cout << "Max Pixel Difference Threshold: " << ErrorMeasure::maxPixelDifferenceThreshold(image) << endl;
     return 0;
 }
