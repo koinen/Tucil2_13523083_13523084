@@ -13,14 +13,16 @@ using namespace std;
 class Image {
 private:
     int width, height;
-    MatrixXd red, green, blue;
+    
 
 public:
+    MatrixXd red, green, blue;
     // MUST USE LOADIMAGE TO INITIALIZE THE IMAGE
     Image();
-
     void loadImage(const char* filename);
     
+    void saveImage(const char* filename) const;
+
     MatrixXd Red() const;
     MatrixXd Green() const;
     MatrixXd Blue() const;

@@ -1,46 +1,41 @@
-using namespace std;
+#include "../include/QuadTree.hpp"
 
-class QuadTree {
-    private:
-        int x, y;
-        int width, height;
+QuadTree::QuadTree(int x, int y, int width, int height, Image *img) : x(x), y(y), width(width), height(height), isLeaf(true), topLeftTree(nullptr), topRightTree(nullptr), bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img) {
+    if (width <= 0 || height <= 0) {
+        throw std::invalid_argument("Width and height must be positive integers.");
+    }
+}
 
-        bool isLeaf;
-        int val;
+QuadTree::~QuadTree() {
+    delete topLeftTree;
+    delete topRightTree;
+    delete bottomLeftTree;
+    delete bottomRightTree;
+}
 
-        QuadTree *topLeftTree;
-        QuadTree *topRightTree;
-        QuadTree *bottomLeftTree;
-        QuadTree *bottomRightTree;
-        
-    public:
-        QuadTree(int x, int y, int width, int height) {
-            this->x = x;
-            this->y = y;
-            this->width = width;
-            this->height = height;
-            this->isLeaf = true;
-            this->val = 0;
-            this->topLeftTree = nullptr;
-            this->topRightTree = nullptr;
-            this->bottomLeftTree = nullptr;
-            this->bottomRightTree = nullptr;
-        }
+void QuadTree::divide() {
+    if (width <= 1 && height <= 1) {
+        return;
+    }
 
-        void divide() {
-            int width1 = width / 2;
-            int height1 = height / 2;
-            int width2 = width - width1;
-            int height2 = height - height1;
+    int halfWidth = width / 2;
+    int halfHeight = height / 2;
 
-            topLeftTree = new QuadTree(x, y, width1, height1);
-            topRightTree = new QuadTree(x + width1, y, width2, height1);
-            bottomLeftTree = new QuadTree(x, y + height1, width1, height2);
-            bottomRightTree = new QuadTree(x + width1, y + height1, width2, height2);
-            isLeaf = false;
-        }
+    topLeftTree = new QuadTree(x, y, halfWidth, halfHeight, image);
+    topRightTree = new QuadTree(x + halfWidth, y, width - halfWidth, halfHeight, image);
+    bottomLeftTree = new QuadTree(x, y + halfHeight, halfWidth, height - halfHeight, image);
+    bottomRightTree = new QuadTree(x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight, image);
 
-        void setVal(int val) {
-            this->val = val;
-        }
-};
+    isLeaf = false;
+}
+
+void QuadTree::setVal(double redVal, double greenVal, double blueVal) {
+    if (isLeaf) {
+        std::cout << "balls\n";
+        image->red.block(x, y, height, width) = MatrixXd::Constant(height, width, redVal);
+        image->green.block(x, y, height, width) = MatrixXd::Constant(height, width, greenVal);
+        image->blue.block(x, y, height, width) = MatrixXd::Constant(height, width, blueVal);
+    }
+}
+
+

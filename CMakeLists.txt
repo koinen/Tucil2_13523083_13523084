@@ -6,9 +6,10 @@ find_package(Eigen3 REQUIRED)
 
 include_directories(include)
 
-add_executable(app src/test.cpp
+add_executable(app src/main.cpp
     src/ErrorMeasure.cpp
     src/Image.cpp
+    src/QuadTree.cpp
 )
 
 target_include_directories(app PRIVATE ${Stb_INCLUDE_DIR})

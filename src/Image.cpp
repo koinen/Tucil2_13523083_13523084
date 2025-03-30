@@ -23,6 +23,25 @@ void Image::loadImage(const char* filename) {
     stbi_image_free(img);
 }
 
+void Image::saveImage(const char* filename) const {
+    int channels = 3;
+    unsigned char* img = new unsigned char[width * height * channels];
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            img[(i * width + j) * channels] = static_cast<unsigned char>(red(i, j) * 255);
+            img[(i * width + j) * channels + 1] = static_cast<unsigned char>(green(i, j) * 255);
+            img[(i * width + j) * channels + 2] = static_cast<unsigned char>(blue(i, j) * 255);
+        }
+    }
+
+    if (!stbi_write_png(filename, width, height, channels, img, width * channels)) {
+        cerr << "Failed to save image: " << filename << endl;
+    }
+
+    delete[] img;
+}
+
 MatrixXd Image::Red() const {
     return red;
 }
