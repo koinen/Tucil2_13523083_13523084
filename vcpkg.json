@@ -1,9 +1,6 @@
 {
   "dependencies": [
-    {
-      "name": "fmt",
-      "host": true
-    },
-    "stb"
+    "stb",
+    "eigen3"
   ]
 }
