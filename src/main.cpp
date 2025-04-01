@@ -7,25 +7,25 @@
 
 
 int main() {
-    const char* filename = "test/example.jpg";
+    const char* filename = "test/example.png";
     Image image;
     image.loadImage(filename);
-    QuadTree quadtree(0, 0, image.Red().cols(), image.Red().rows(), &image);
-    
-    quadtree.divide();
-    QuadTree *topLeft = quadtree.getTopLeftTree();
-    topLeft->setVal(0, 0, 0);
-
-    std::cout << "Red Matrix:" << std::endl;
+    // image.setColorBlue(0.5);
+    // image.setColorGreen(0.5);
+    // image.setColorRed(0.5);
+    // image.saveImage("test/output.png");
+    QuadTree quadTree(0, 0, image.Red().cols(), image.Red().rows(), &image, 100);
+    Image renderedImage = quadTree.renderImage(3);
     // std::cout << image.Red() << std::endl;
     
     cout << "Image loaded successfully." << endl;
-    cout << "Width: " << image.Red().cols() << ", Height: " << image.Red().rows() << endl;
-    image.saveImage("test/output.png");
+    renderedImage.printImageDetails();
+    renderedImage.saveImage("test/output.png");
+    // quadTree.printNodeInfo(0);
+    
     cout << "Image saved successfully." << endl;
     // cout << "Variance Threshold: " << ErrorMeasure::varianceThreshold(image) << endl;
     // cout << "Mean Absolute Deviation Threshold: " << ErrorMeasure::meanAbsoluteDeviationThreshold(image) << endl;
     // cout << "Max Pixel Difference Threshold: " << ErrorMeasure::maxPixelDifferenceThreshold(image) << endl;
-
     return 0;
 }

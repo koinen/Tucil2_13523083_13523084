@@ -2,6 +2,36 @@
 
 Image::Image() : width(0), height(0) {}
 
+Image::Image(const int width, const int height) : width(width), height(height) {
+    red.resize(height, width);
+    green.resize(height, width);
+    blue.resize(height, width);
+}
+
+Image::Image(const Image& topLeft, const Image& topRight, const Image& bottomLeft, const Image& bottomRight) {
+    width = topLeft.width + topRight.width;
+    height = topLeft.height + bottomLeft.height;
+
+    red.resize(height, width);
+    green.resize(height, width);
+    blue.resize(height, width);
+
+    red.block(0, 0, topLeft.height, topLeft.width) = topLeft.red;
+    red.block(0, topLeft.width, topRight.height, topRight.width) = topRight.red;
+    red.block(topLeft.height, 0, bottomLeft.height, bottomLeft.width) = bottomLeft.red;
+    red.block(topLeft.height, topLeft.width, bottomRight.height, bottomRight.width) = bottomRight.red;
+
+    green.block(0, 0, topLeft.height, topLeft.width) = topLeft.green;
+    green.block(0, topLeft.width, topRight.height, topRight.width) = topRight.green;
+    green.block(topLeft.height, 0, bottomLeft.height, bottomLeft.width) = bottomLeft.green;
+    green.block(topLeft.height, topLeft.width, bottomRight.height, bottomRight.width) = bottomRight.green;
+
+    blue.block(0, 0, topLeft.height, topLeft.width) = topLeft.blue;
+    blue.block(0, topLeft.width, topRight.height, topRight.width) = topRight.blue;
+    blue.block(topLeft.height, 0, bottomLeft.height, bottomLeft.width) = bottomLeft.blue;
+    blue.block(topLeft.height, topLeft.width, bottomRight.height, bottomRight.width) = bottomRight.blue;
+}
+
 void Image::loadImage(const char* filename) {
     unsigned char* img = stbi_load(filename, &width, &height, nullptr, 3);
     if (img == nullptr) {
@@ -32,6 +62,7 @@ void Image::saveImage(const char* filename) const {
             img[(i * width + j) * channels] = static_cast<unsigned char>(red(i, j) * 255);
             img[(i * width + j) * channels + 1] = static_cast<unsigned char>(green(i, j) * 255);
             img[(i * width + j) * channels + 2] = static_cast<unsigned char>(blue(i, j) * 255);
+            // cout << "Red: " << red(i, j) << ", Green: " << green(i, j) << ", Blue: " << blue(i, j) << endl;
         }
     }
 
@@ -52,4 +83,33 @@ MatrixXd Image::Green() const {
 
 MatrixXd Image::Blue() const {
     return blue;
+}
+
+double Image::getAvgRedBlock(int x, int y, int width, int height) const {
+    return red.block(y, x, height, width).mean();
+}
+
+double Image::getAvgGreenBlock(int x, int y, int width, int height) const {
+    return green.block(y, x, height, width).mean();
+}
+
+double Image::getAvgBlueBlock(int x, int y, int width, int height) const {
+    return blue.block(y, x, height, width).mean();
+}
+
+void Image::setColorRed(double avg) {
+    red.setConstant(avg);
+}
+
+void Image::setColorGreen(double avg) {
+    green.setConstant(avg);
+}
+
+void Image::setColorBlue(double avg) {
+    blue.setConstant(avg);
+}
+
+void Image::printImageDetails() {
+    cout << "Image Details:" << endl;
+    cout << "Width: " << width << ", Height: " << height << endl;
 }

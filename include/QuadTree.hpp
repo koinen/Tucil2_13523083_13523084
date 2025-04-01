@@ -18,15 +18,21 @@ class QuadTree {
         QuadTree *bottomRightTree;
 
         Image *image;
+
+        double redVal, greenVal, blueVal;
+
+        const int minBlockSize; // Minimum block size for leaf nodes
+
+        int maxDepth; // Maximum depth of the tree
         
     public:
-        QuadTree(int x, int y, int width, int height, Image *image);
+        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1);
 
         ~QuadTree();
 
         void divide();
 
-        void setVal(double redVal, double greenVal, double blueVal);
+        void setAverageColors();
 
         int getX() const { return x; }
         int getY() const { return y; }
@@ -40,6 +46,10 @@ class QuadTree {
         QuadTree* getTopRightTree() const { return topRightTree; }
         QuadTree* getBottomLeftTree() const { return bottomLeftTree; }
         QuadTree* getBottomRightTree() const { return bottomRightTree; }
+
+        Image renderImage(int depth);
+
+        void printNodeInfo(int depth) const;
 };
 
 #endif // QUADTREE_HPP
