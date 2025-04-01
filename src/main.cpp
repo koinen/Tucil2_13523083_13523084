@@ -7,10 +7,11 @@
 
 
 int main() {
-    const char* filename = "test/example.png";
+    const char* filename = "test/example.jpg";
     Image image;
     image.loadImage(filename);
     QuadTree quadtree(0, 0, image.Red().cols(), image.Red().rows(), &image);
+    
     quadtree.divide();
     QuadTree *topLeft = quadtree.getTopLeftTree();
     topLeft->setVal(0, 0, 0);
