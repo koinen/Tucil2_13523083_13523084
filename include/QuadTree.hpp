@@ -22,15 +22,15 @@ class QuadTree {
         double redVal, greenVal, blueVal;
 
         const int minBlockSize; // Minimum block size for leaf nodes
-
-        int maxDepth; // Maximum depth of the tree
         
     public:
-        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1);
+        int maxDepth = 0;
+        
+        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1, int currentDepth = 0);
 
         ~QuadTree();
 
-        void divide();
+        void divide(int currentDepth);
 
         void setAverageColors();
 
