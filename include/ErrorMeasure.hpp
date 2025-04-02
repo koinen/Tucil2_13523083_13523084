@@ -8,12 +8,11 @@ using namespace Eigen;
 using namespace std;
 
 class ErrorMeasure {
-private:
+public:
     static double Variance(const MatrixXd& matrix, int x1, int y1, int x2, int y2);
     static double MeanAbsoluteDeviation(const MatrixXd& matrix, int x1, int y1, int x2, int y2);
     static double MaxPixelDifference(const MatrixXd& matrix, int x1, int y1, int x2, int y2);
 
-public:
     static double varianceThreshold(const Image& image, int x1, int y1, int x2, int y2);
     static double meanAbsoluteDeviationThreshold(const Image& image, int x1, int y1, int x2, int y2);
     static double maxPixelDifferenceThreshold(const Image& image, int x1, int y1, int x2, int y2);

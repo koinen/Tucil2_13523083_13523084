@@ -14,7 +14,7 @@ int main() {
     // image.setColorGreen(0.5);
     // image.setColorRed(0.5);
     // image.saveImage("test/output.png");
-    QuadTree quadTree(0, 0, image.Red().cols(), image.Red().rows(), &image, 10);
+    QuadTree quadTree(0, 0, image.Red().cols(), image.Red().rows(), &image, 1, 0, 0.1, ErrorMeasure::maxPixelDifferenceThreshold);
     Image renderedImage = quadTree.renderImage(quadTree.maxDepth);
     // std::cout << image.Red() << std::endl;
     

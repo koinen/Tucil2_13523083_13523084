@@ -1,13 +1,16 @@
 #include "../include/QuadTree.hpp"
 
-QuadTree::QuadTree(int x, int y, int width, int height, Image *img, int minBlockSize, int currentDepth) 
+QuadTree::QuadTree(int x, int y, int width, int height, Image *img, int minBlockSize, int currentDepth, double thresholdValue, double (*errorMeasure)(const Image&, int, int, int, int))
     : x(x), y(y), width(width), height(height), isLeaf(true), topLeftTree(nullptr), topRightTree(nullptr), 
-      bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), minBlockSize(minBlockSize), maxDepth(currentDepth) {
+      bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), minBlockSize(minBlockSize), maxDepth(currentDepth), thresholdValue(thresholdValue), errorMeasure(errorMeasure) {
     if (width <= 0 || height <= 0) {
         throw std::invalid_argument("Width and height must be positive integers.");
     }
     setAverageColors(); // Set average colors for the current block
-    if (width * height < minBlockSize || width <= 1 || height <= 1) {
+    double error = errorMeasure(*image, x, y, x + width - 1, y + height - 1); 
+    // cout << "Error: " << error << endl;
+    // cout << "Threshold Value: " << thresholdValue << endl;
+    if (width * height < minBlockSize || width <= 1 || height <= 1 || error < thresholdValue) {
         isLeaf = true; // No need to divide further
     } else {
         divide(currentDepth + 1); // Divide the tree into quadrants and increase depth
@@ -25,10 +28,10 @@ void QuadTree::divide(int currentDepth) {
     int halfWidth = width / 2;
     int halfHeight = height / 2;
     isLeaf = false;
-    topLeftTree = new QuadTree(x, y, halfWidth, halfHeight, image, minBlockSize, currentDepth);
-    topRightTree = new QuadTree(x + halfWidth, y, width - halfWidth, halfHeight, image, minBlockSize, currentDepth);
-    bottomLeftTree = new QuadTree(x, y + halfHeight, halfWidth, height - halfHeight, image, minBlockSize, currentDepth);
-    bottomRightTree = new QuadTree(x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight, image, minBlockSize, currentDepth);
+    topLeftTree = new QuadTree(x, y, halfWidth, halfHeight, image, minBlockSize, currentDepth, thresholdValue, errorMeasure);
+    topRightTree = new QuadTree(x + halfWidth, y, width - halfWidth, halfHeight, image, minBlockSize, currentDepth, thresholdValue, errorMeasure);
+    bottomLeftTree = new QuadTree(x, y + halfHeight, halfWidth, height - halfHeight, image, minBlockSize, currentDepth, thresholdValue, errorMeasure);
+    bottomRightTree = new QuadTree(x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight, image, minBlockSize, currentDepth, thresholdValue, errorMeasure);
 
     // Update maxDepth based on the children
     maxDepth = std::max({topLeftTree->maxDepth, topRightTree->maxDepth, bottomLeftTree->maxDepth, bottomRightTree->maxDepth});

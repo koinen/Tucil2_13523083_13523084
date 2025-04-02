@@ -3,12 +3,12 @@
 // CHECK IF BLOCK FUNC WORK
 double ErrorMeasure::Variance(const MatrixXd& matrix, int x1, int y1, int x2, int y2) {
     double mean = matrix.block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    int rows = y2 - y1;
-    int cols = x2 - x1;
+    int rows = y2 - y1 + 1;
+    int cols = x2 - x1 + 1;
     double variance = 0.0;
 
-    for (int i = y1; i < y2; ++i) {
-        for (int j = x1; j < x2; ++j) {
+    for (int i = y1; i < y2 + 1; ++i) {
+        for (int j = x1; j < x2 + 1; ++j) {
             variance += (matrix(i, j) - mean) * (matrix(i, j) - mean);
         }
     }
@@ -27,12 +27,12 @@ double ErrorMeasure::varianceThreshold(const Image& image, int x1, int y1, int x
 
 double ErrorMeasure::MeanAbsoluteDeviation(const MatrixXd& matrix, int x1, int y1, int x2, int y2) {
     double mean = matrix.block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    int rows = y2 - y1;
-    int cols = x2 - x1;
+    int rows = y2 - y1+1;
+    int cols = x2 - x1+1;
     double mad = 0.0;
 
-    for (int i = y1; i < y2; ++i) {
-        for (int j = x1; j < x2; ++j) {
+    for (int i = y1; i < y2+1; ++i) {
+        for (int j = x1; j < x2+1; ++j) {
             mad += abs(matrix(i, j) - mean);
         }
     }

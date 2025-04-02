@@ -1,7 +1,7 @@
 #ifndef QUADTREE_HPP
 #define QUADTREE_HPP
 
-#include "Image.hpp"
+#include "ErrorMeasure.hpp"
 
 using namespace std;
 
@@ -22,11 +22,17 @@ class QuadTree {
         double redVal, greenVal, blueVal;
 
         const int minBlockSize; // Minimum block size for leaf nodes
+
+        double thresholdValue;
+
+        double (*errorMeasure)(const Image&, int, int, int, int); // Pointer to the error measure function
         
     public:
         int maxDepth = 0;
+
+
         
-        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1, int currentDepth = 0);
+        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1, int currentDepth = 0, double thresholdValue = 0.0, double (*errorMeasure)(const Image&, int, int, int, int) = ErrorMeasure::varianceThreshold);
 
         ~QuadTree();
 

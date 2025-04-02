@@ -11,11 +11,10 @@ using namespace Eigen;
 using namespace std;
 
 class Image {
-private:
+public:
     int width, height;
     MatrixXd red, green, blue;    
 
-public:
     // MUST USE LOADIMAGE TO INITIALIZE THE IMAGE
     Image();
     Image(const int width, const int height);
