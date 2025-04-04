@@ -7,36 +7,34 @@ using namespace std;
 
 class QuadTree {
     private:
-        int x, y;
-        int width, height;
+        int x, y; // Coordinates of the top-left corner of the block
 
-        bool isLeaf;
+        int width, height; // Dimensions of the block
 
-        QuadTree *topLeftTree;
-        QuadTree *topRightTree;
-        QuadTree *bottomLeftTree;
-        QuadTree *bottomRightTree;
+        bool isLeaf; // True if the node is a leaf node, false if it has children
 
-        Image *image;
+        QuadTree *topLeftTree; // Pointer to the top-left child
+        QuadTree *topRightTree; // Pointer to the top-right child
+        QuadTree *bottomLeftTree; // Pointer to the bottom-left child
+        QuadTree *bottomRightTree; // Pointer to the bottom-right child
 
-        double redVal, greenVal, blueVal;
+        Image *image; // Pointer to the image object
 
-        const int minBlockSize; // Minimum block size for leaf nodes
+        double redVal, greenVal, blueVal; // Average color values for the block
 
-        double thresholdValue;
-
-        double (*errorMeasure)(const Image&, int, int, int, int); // Pointer to the error measure function
-        
-    public:
         int maxDepth = 0;
 
+    public:
 
-        
-        QuadTree(int x, int y, int width, int height, Image *image, int minBlockSize = 1, int currentDepth = 0, double thresholdValue = 0.0, double (*errorMeasure)(const Image&, int, int, int, int) = ErrorMeasure::varianceThreshold);
+        QuadTree(Image *image);
+
+        QuadTree(int x, int y, int width, int height, Image *image, int currentDepth = 0);
 
         ~QuadTree();
 
         void divide(int currentDepth);
+
+        void buildTree(int minBlockSize, double thresholdValue, double (*errorMeasure)(const Image&, int, int, int, int));
 
         void setAverageColors();
 
@@ -47,6 +45,8 @@ class QuadTree {
         int getHeight() const { return height; }
 
         bool isLeafNode() const { return isLeaf; }
+
+        int getMaxDepth() const { return maxDepth; }
 
         QuadTree* getTopLeftTree() const { return topLeftTree; }
         QuadTree* getTopRightTree() const { return topRightTree; }
