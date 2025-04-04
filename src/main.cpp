@@ -4,26 +4,30 @@
 #include "../include/Image.hpp"
 #include "../include/ErrorMeasure.hpp"
 #include "../include/QuadTree.hpp"
+#include "../include/GIF.hpp"
 
 
 int main() {
-    const char* filename = "test/example.png";
-    Image image;
-    image.loadImage(filename);
-    // image.setColorBlue(0.5);
-    // image.setColorGreen(0.5);
-    // image.setColorRed(0.5);
-    // image.saveImage("test/output.png");
-    QuadTree quadTree(0, 0, image.Red().cols(), image.Red().rows(), &image, 1, 0, 0.1, ErrorMeasure::maxPixelDifferenceThreshold);
-    Image renderedImage = quadTree.renderImage(quadTree.maxDepth);
-    // std::cout << image.Red() << std::endl;
+    const char filename[] = "test/example.png";
+    Image image(filename);
+
+    QuadTree quadTree(&image);
+    quadTree.buildTree(1, 0.1, ErrorMeasure::maxPixelDifferenceThreshold);
+    Image renderedImage = quadTree.renderImage(quadTree.getMaxDepth());
     
     cout << "Image loaded successfully." << endl;
     renderedImage.printImageDetails();
     renderedImage.saveImage("test/output.png");
-    // quadTree.printNodeInfo(0);
     
     cout << "Image saved successfully." << endl;
+
+    Image *frames = new Image[quadTree.getMaxDepth() + 1];
+    for (int i = 0; i <= quadTree.getMaxDepth(); i++) {
+        frames[i] = quadTree.renderImage(i);
+    }
+
+    GIF::saveGIF("test/output.gif", frames, quadTree.getMaxDepth() + 1);
+    
     // cout << "Variance Threshold: " << ErrorMeasure::varianceThreshold(image) << endl;
     // cout << "Mean Absolute Deviation Threshold: " << ErrorMeasure::meanAbsoluteDeviationThreshold(image) << endl;
     // cout << "Max Pixel Difference Threshold: " << ErrorMeasure::maxPixelDifferenceThreshold(image) << endl;
