@@ -39,9 +39,9 @@ class Image {
         void setColorGreen(double avg) { green.setConstant(avg); }
         void setColorBlue(double avg) { blue.setConstant(avg); }
 
-        double getAvgRedBlock(int x, int y, int width, int height) const { red.block(y, x, height, width).mean(); }
-        double getAvgGreenBlock(int x, int y, int width, int height) const { green.block(y, x, height, width).mean(); }
-        double getAvgBlueBlock(int x, int y, int width, int height) const { blue.block(y, x, height, width).mean(); }
+        double getAvgRedBlock(int x, int y, int width, int height) const { return red.block(y, x, height, width).mean(); }
+        double getAvgGreenBlock(int x, int y, int width, int height) const { return green.block(y, x, height, width).mean(); }
+        double getAvgBlueBlock(int x, int y, int width, int height) const { return blue.block(y, x, height, width).mean(); }
 
         void printImageDetails();
 };
