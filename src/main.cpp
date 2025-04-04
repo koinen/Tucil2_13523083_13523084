@@ -8,6 +8,7 @@
 
 
 int main() {
+    std::cout << "\x1B[2J\x1B[H"; // "clear console" (moves cursor to top left)
     const char filename[] = "test/example.png";
     Image image(filename);
 
