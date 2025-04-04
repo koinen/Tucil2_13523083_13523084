@@ -4,13 +4,13 @@ project(Tucil2_13523083_13523084 VERSION 0.1.0 LANGUAGES C CXX)
 find_package(Stb REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(GIF REQUIRED)
-include_directories(include)
+include_directories(src/include)
 
 add_executable(app src/main.cpp
-    src/ErrorMeasure.cpp
-    src/Image.cpp
-    src/QuadTree.cpp
-    src/GIF.cpp
+    src/include/ErrorMeasure.cpp
+    src/include/Image.cpp
+    src/include/QuadTree.cpp
+    src/include/GIF.cpp
 )
 
 target_include_directories(app PRIVATE ${Stb_INCLUDE_DIR})
