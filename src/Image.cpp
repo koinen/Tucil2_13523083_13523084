@@ -2,6 +2,10 @@
 
 Image::Image() : width(0), height(0) {}
 
+Image::Image(const char* filename) {
+    loadImage(filename);
+}
+
 Image::Image(const int width, const int height) : width(width), height(height) {
     red.resize(height, width);
     green.resize(height, width);
@@ -71,42 +75,6 @@ void Image::saveImage(const char* filename) const {
     }
 
     delete[] img;
-}
-
-MatrixXd Image::Red() const {
-    return red;
-}
-
-MatrixXd Image::Green() const {
-    return green;
-}
-
-MatrixXd Image::Blue() const {
-    return blue;
-}
-
-double Image::getAvgRedBlock(int x, int y, int width, int height) const {
-    return red.block(y, x, height, width).mean();
-}
-
-double Image::getAvgGreenBlock(int x, int y, int width, int height) const {
-    return green.block(y, x, height, width).mean();
-}
-
-double Image::getAvgBlueBlock(int x, int y, int width, int height) const {
-    return blue.block(y, x, height, width).mean();
-}
-
-void Image::setColorRed(double avg) {
-    red.setConstant(avg);
-}
-
-void Image::setColorGreen(double avg) {
-    green.setConstant(avg);
-}
-
-void Image::setColorBlue(double avg) {
-    blue.setConstant(avg);
 }
 
 void Image::printImageDetails() {

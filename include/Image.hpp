@@ -11,30 +11,39 @@ using namespace Eigen;
 using namespace std;
 
 class Image {
-public:
-    int width, height;
-    MatrixXd red, green, blue;    
+    private:
+        int width, height;
+        MatrixXd red, green, blue;    
 
-    // MUST USE LOADIMAGE TO INITIALIZE THE IMAGE
-    Image();
-    Image(const int width, const int height);
-    Image(const Image& topLeft, const Image& topRight, const Image& bottomLeft, const Image& bottomRight);
-    void loadImage(const char* filename);
-    void saveImage(const char* filename) const;
+    public:
+        Image();
+        Image(const char* filename);
+        Image(const int width, const int height);
+        Image(const Image& topLeft, const Image& topRight, const Image& bottomLeft, const Image& bottomRight);
 
-    MatrixXd Red() const;
-    MatrixXd Green() const;
-    MatrixXd Blue() const;
+        void loadImage(const char* filename);
+        void saveImage(const char* filename) const;
 
-    double getAvgRedBlock(int x, int y, int width, int height) const;
-    double getAvgGreenBlock(int x, int y, int width, int height) const;
-    double getAvgBlueBlock(int x, int y, int width, int height) const;
-    
-    void setColorRed(double avg);
-    void setColorGreen(double avg);
-    void setColorBlue(double avg);
+        int getWidth() const { return width; }
+        int getHeight() const { return height; }
 
-    void printImageDetails();
+        MatrixXd Red() const { return red; }
+        MatrixXd Green() const { return green; }
+        MatrixXd Blue() const { return blue; }
+
+        double redAt(int x, int y) const { return red(y, x); }
+        double greenAt(int x, int y) const { return green(y, x); }
+        double blueAt(int x, int y) const { return blue(y, x); }
+
+        void setColorRed(double avg) { red.setConstant(avg); }
+        void setColorGreen(double avg) { green.setConstant(avg); }
+        void setColorBlue(double avg) { blue.setConstant(avg); }
+
+        double getAvgRedBlock(int x, int y, int width, int height) const { red.block(y, x, height, width).mean(); }
+        double getAvgGreenBlock(int x, int y, int width, int height) const { green.block(y, x, height, width).mean(); }
+        double getAvgBlueBlock(int x, int y, int width, int height) const { blue.block(y, x, height, width).mean(); }
+
+        void printImageDetails();
 };
 
 #endif
