@@ -18,7 +18,7 @@ class QuadTree {
         QuadTree *bottomLeftTree; // Pointer to the bottom-left child
         QuadTree *bottomRightTree; // Pointer to the bottom-right child
 
-        const Image& image; // image object
+        Image *image; // Pointer to the image object
 
         double redVal, greenVal, blueVal; // Average color values for the block
 
@@ -26,13 +26,9 @@ class QuadTree {
 
     public:
 
-        static double progress; // Progress of the tree building process
+        QuadTree(Image *image);
 
-        static long long totalNodes; // Total number of leaf nodes in the tree
-
-        QuadTree(const Image& image);
-
-        QuadTree(int x, int y, int width, int height, const Image& image, int currentDepth = 0);
+        QuadTree(int x, int y, int width, int height, Image *image, int currentDepth = 0);
 
         ~QuadTree();
 

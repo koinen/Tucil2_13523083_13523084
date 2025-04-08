@@ -8,19 +8,15 @@
 
 
 int main() {
-    cout << "\x1B[2J\x1B[H"; // "clear console" (moves cursor to top left)
+    std::cout << "\x1B[2J\x1B[H"; // "clear console" (moves cursor to top left)
     const char filename[] = "test/example.png";
     Image image(filename);
 
-    QuadTree quadTree(image);
-    cout << "Image loaded successfully." << endl;
-    cout << "Image dimensions: " << image.getWidth() << "x" << image.getHeight() << endl;
-    quadTree.buildTree(4, 0.1, ErrorMeasure::maxPixelDifferenceThreshold);
-    cout << "QuadTree built successfully." << endl;
-    cout << "Total Nodes: " << QuadTree::totalNodes << endl;
-    cout << "Max depth: " << quadTree.getMaxDepth() << endl;
+    QuadTree quadTree(&image);
+    quadTree.buildTree(1, 0.1, ErrorMeasure::maxPixelDifferenceThreshold);
     Image renderedImage = quadTree.renderImage(quadTree.getMaxDepth());
     
+    cout << "Image loaded successfully." << endl;
     renderedImage.printImageDetails();
     renderedImage.saveImage("test/output.png");
     
@@ -30,7 +26,6 @@ int main() {
     for (int i = 0; i <= quadTree.getMaxDepth(); i++) {
         frames[i] = quadTree.renderImage(i);
     }
-    delete[] frames;
 
     GIF::saveGIF("test/output.gif", frames, quadTree.getMaxDepth() + 1);
     
