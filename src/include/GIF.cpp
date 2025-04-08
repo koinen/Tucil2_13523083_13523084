@@ -8,32 +8,32 @@ using namespace std;
 class Bucket {
 public:
     int l, r; // left and right bounds of the bucket
-    vector<tuple<double, double, double>> *colors; // color space
-    vector<tuple<double, double, double>> *res; // resulting colors
+    static vector<tuple<double, double, double>> colors; // color space
+    static vector<tuple<double, double, double>> res; // resulting colors
     int depth; // depth of the bucket in the tree
     int maxDepth; // max depth of the tree
 
-    Bucket(vector<tuple<double, double, double>> *colors, vector<tuple<double, double, double>> *res, int l, int r, int maxDepth, int depth = 0) 
-        : colors(colors), res(res), maxDepth(maxDepth), l(l), r(r), depth(depth) {
+    Bucket(int l, int r, int maxDepth, int depth = 0) 
+        : maxDepth(maxDepth), l(l), r(r), depth(depth) {
         divide(depth);
     }
 
     void sortColors(int index) {
         if (index == 0) {
-            sort(colors->begin() + static_cast<std::size_t>(l), 
-                 colors->begin() + static_cast<std::size_t>(r), 
+            sort(colors.begin() + static_cast<size_t>(l), 
+                 colors.begin() + static_cast<size_t>(r), 
                  [](const tuple<double, double, double>& a, const tuple<double, double, double>& b) {
                      return get<0>(a) < get<0>(b);
                  });
         } else if (index == 1) {
-            sort(colors->begin() + static_cast<std::size_t>(l), 
-                 colors->begin() + static_cast<std::size_t>(r), 
+            sort(colors.begin() + static_cast<size_t>(l), 
+                 colors.begin() + static_cast<size_t>(r), 
                  [](const tuple<double, double, double>& a, const tuple<double, double, double>& b) {
                      return get<1>(a) < get<1>(b);
                  });
         } else if (index == 2) {
-            sort(colors->begin() + static_cast<std::size_t>(l), 
-                 colors->begin() + static_cast<std::size_t>(r), 
+            sort(colors.begin() + static_cast<size_t>(l), 
+                 colors.begin() + static_cast<size_t>(r), 
                  [](const tuple<double, double, double>& a, const tuple<double, double, double>& b) {
                      return get<2>(a) < get<2>(b);
                  });
@@ -42,18 +42,16 @@ public:
 
     void divide(int depth) {
         if (depth >= maxDepth) {
-            // save the average color of the bucket
             double avgR = 0, avgG = 0, avgB = 0;
             for (int i = l; i <= r; i++) {
-                avgR += get<0>((*colors)[i]);
-                avgG += get<1>((*colors)[i]);
-                avgB += get<2>((*colors)[i]);
+                avgR += get<0>((colors)[i]);
+                avgG += get<1>((colors)[i]);
+                avgB += get<2>((colors)[i]);
             }
             avgR /= (r - l + 1);
             avgG /= (r - l + 1);
             avgB /= (r - l + 1);
-            res->emplace_back(avgR, avgG, avgB);
-            std::cout << "Bucket " << res->size() << ": (" << avgR << ", " << avgG << ", " << avgB << ")" << std::endl;
+            res.emplace_back(avgR, avgG, avgB);
             return;
         }
         int mid = (l + r) / 2;
@@ -62,12 +60,12 @@ public:
         double maxR = 1, maxG = 1, maxB = 1;
         // find the index with the largest range
         for (int i = l; i <= r; i++) {
-            minR = min(minR, get<0>((*colors)[i]));
-            maxR = max(maxR, get<0>((*colors)[i]));
-            minG = min(minG, get<1>((*colors)[i]));
-            maxG = max(maxG, get<1>((*colors)[i]));
-            minB = min(minB, get<2>((*colors)[i]));
-            maxB = max(maxB, get<2>((*colors)[i]));
+            minR = min(minR, get<0>((colors)[i]));
+            maxR = max(maxR, get<0>((colors)[i]));
+            minG = min(minG, get<1>((colors)[i]));
+            maxG = max(maxG, get<1>((colors)[i]));
+            minB = min(minB, get<2>((colors)[i]));
+            maxB = max(maxB, get<2>((colors)[i]));
         }
         double rangeR = maxR - minR;
         double rangeG = maxG - minG;
@@ -79,17 +77,24 @@ public:
         } else {
             index = 2;
         }
-        // sort the colors in the bucket
         sortColors(index);
-        // divide the bucket into two buckets
-        Bucket left(colors, res, l, mid, maxDepth, depth + 1);
-        Bucket right(colors, res, mid + 1, r, maxDepth, depth + 1);
+        Bucket left(l, mid, maxDepth, depth + 1);
+        Bucket right(mid + 1, r, maxDepth, depth + 1);
     }
 
-    static vector<tuple<double, double, double>> quantize(vector<tuple<double, double, double>> *colors, int colorCount) {
-        vector<tuple<double, double, double>> res;
+    static vector<tuple<double, double, double>> quantize(const Image& img, int colorCount) {
+        res.clear();
         res.reserve(colorCount);
-        Bucket bucket(colors, &res, 0, colors->size() - 1, log2(colorCount));
+        int width = img.getWidth();
+        int height = img.getHeight();
+        colors.clear();
+        colors.reserve(width * height);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Bucket::colors.emplace_back(img.redAt(j, i), img.greenAt(j, i), img.blueAt(j, i));
+            }
+        }
+        Bucket bucket(0, colors.size() - 1, log2(colorCount));
         return res;
     }
 
@@ -110,27 +115,21 @@ public:
     }
 };
 
+vector<tuple<double, double, double>> Bucket::colors;
+vector<tuple<double, double, double>> Bucket::res;
+
 /* ******************************************************************* */
 /*  Create a color palette for the GIF, using median cut quantization. */
 /* ******************************************************************* */
-GifColorType* GIF::createColorPalette(Image img, int colorCount) {
-    vector<tuple<double, double, double>> colors;
-    int width = img.getWidth();
-    int height = img.getHeight();
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            colors.emplace_back(img.redAt(j, i), img.greenAt(j, i), img.blueAt(j, i));
-        }
-    }
-    vector<tuple<double, double, double>> palette = Bucket::quantize(&colors, colorCount);
-    
-    GifColorType* gifPalette = new GifColorType[colorCount];
+GifColorType* GIF::createColorPalette(const Image& img, int colorCount) {
+    vector<tuple<double, double, double>> palette = Bucket::quantize(img, colorCount);
+    GifColorType *gifPalette = new GifColorType[colorCount];
     for (int i = 0; i < colorCount; i++) {
         gifPalette[i].Red   = static_cast<int>(get<0>(palette[i]) * 255);
         gifPalette[i].Green = static_cast<int>(get<1>(palette[i]) * 255);
         gifPalette[i].Blue  = static_cast<int>(get<2>(palette[i]) * 255);
     }
-    
+
     return gifPalette;
 }
 
@@ -140,10 +139,9 @@ void GIF::saveGIF(const char* fileName, Image* images, int frameCount) {
 
     int width = images[0].getWidth();
     int height = images[0].getHeight();
-    int error;
-    GifFileType* gifFile = EGifOpenFileName(fileName, false, &error);
+    GifFileType* gifFile = EGifOpenFileName(fileName, false, NULL);
     if (!gifFile) {
-        std::cout << "EGifOpenFileName() failed - " << error << std::endl;
+        cout << "EGifOpenFileName() failed" << endl;
     }
 
     gifFile->SWidth = width;
@@ -200,8 +198,9 @@ void GIF::saveGIF(const char* fileName, Image* images, int frameCount) {
     }
 
     if (EGifSpew(gifFile) == GIF_ERROR) {
-        std::cout << "EGifSpew() failed - " << gifFile->Error << std::endl;
-        EGifCloseFile(gifFile, &error);
+        cout << "EGifSpew() failed - " << gifFile->Error << endl;
+        EGifCloseFile(gifFile, NULL);
     }
-    error = 0;
+    
+    delete[] palette;
 }

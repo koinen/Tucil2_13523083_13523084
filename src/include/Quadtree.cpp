@@ -1,15 +1,18 @@
 #include "../include/QuadTree.hpp"
 
-QuadTree::QuadTree(Image *img) 
-    : x(0), y(0), width(img->getWidth()), height(img->getHeight()), isLeaf(true), topLeftTree(nullptr), 
+double QuadTree::progress = 0.0; // Initialize static member variable
+long long QuadTree::totalNodes = 0; // Initialize static member variable
+
+QuadTree::QuadTree(const Image& img) 
+    : x(0), y(0), width(img.getWidth()), height(img.getHeight()), isLeaf(true), topLeftTree(nullptr), 
       topRightTree(nullptr), bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(0) {
-    setAverageColors();
+    totalNodes++;
 }
 
-QuadTree::QuadTree(int x, int y, int width, int height, Image *img, int currentDepth)
+QuadTree::QuadTree(int x, int y, int width, int height, const Image& img, int currentDepth)
     : x(x), y(y), width(width), height(height), isLeaf(true), topLeftTree(nullptr), topRightTree(nullptr), 
       bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(currentDepth) {
-    setAverageColors();
+    totalNodes++;
 }
 
 QuadTree::~QuadTree() {
@@ -34,7 +37,7 @@ void QuadTree::divide(int currentDepth) {
 }
 
 void QuadTree::buildTree(int minBlockSize, double thresholdValue, double (*errorMeasure)(const Image&, int, int, int, int)) {
-    double error = errorMeasure(*image, x, y, x + width - 1, y + height - 1); 
+    double error = errorMeasure(image, x, y, x + width - 1, y + height - 1); 
     if (width <= 1 || height <= 1 || width * height <= minBlockSize || error < thresholdValue) {
         isLeaf = true;
     } else {
@@ -45,12 +48,19 @@ void QuadTree::buildTree(int minBlockSize, double thresholdValue, double (*error
         bottomRightTree->buildTree(minBlockSize, thresholdValue, errorMeasure);
         maxDepth = max({topLeftTree->maxDepth, topRightTree->maxDepth, bottomLeftTree->maxDepth, bottomRightTree->maxDepth});
     }
+    setAverageColors();
 }
 
 void QuadTree::setAverageColors() {
-    redVal = image->getAvgRedBlock(x, y, width, height);
-    greenVal = image->getAvgGreenBlock(x, y, width, height);
-    blueVal = image->getAvgBlueBlock(x, y, width, height);
+    if (isLeaf) {
+        redVal = image.getAvgRedBlock(x, y, width, height);
+        greenVal = image.getAvgGreenBlock(x, y, width, height);
+        blueVal = image.getAvgBlueBlock(x, y, width, height);
+    } else {
+        redVal = (topLeftTree->redVal + topRightTree->redVal + bottomLeftTree->redVal + bottomRightTree->redVal) / 4.0;
+        greenVal = (topLeftTree->greenVal + topRightTree->greenVal + bottomLeftTree->greenVal + bottomRightTree->greenVal) / 4.0;
+        blueVal = (topLeftTree->blueVal + topRightTree->blueVal + bottomLeftTree->blueVal + bottomRightTree->blueVal) / 4.0;
+    }
 }
 
 Image QuadTree::renderImage(int depth) {
@@ -81,4 +91,3 @@ void QuadTree::printNodeInfo(int depth) const {
     }
     cout << "----------------------------------------" << endl;
 }
-
