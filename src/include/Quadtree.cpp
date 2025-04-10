@@ -2,15 +2,11 @@
 
 QuadTree::QuadTree(Image *img) 
     : x(0), y(0), width(img->getWidth()), height(img->getHeight()), isLeaf(true), topLeftTree(nullptr), 
-      topRightTree(nullptr), bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(0) {
-    setAverageColors();
-}
+      topRightTree(nullptr), bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(0) {}
 
 QuadTree::QuadTree(int x, int y, int width, int height, Image *img, int currentDepth)
     : x(x), y(y), width(width), height(height), isLeaf(true), topLeftTree(nullptr), topRightTree(nullptr), 
-      bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(currentDepth) {
-    setAverageColors();
-}
+      bottomLeftTree(nullptr), bottomRightTree(nullptr), image(img), maxDepth(currentDepth) {}
 
 QuadTree::~QuadTree() {
     delete topLeftTree;
@@ -45,13 +41,21 @@ void QuadTree::buildTree(int minBlockSize, double thresholdValue, double (*error
         bottomRightTree->buildTree(minBlockSize, thresholdValue, errorMeasure);
         maxDepth = max({topLeftTree->maxDepth, topRightTree->maxDepth, bottomLeftTree->maxDepth, bottomRightTree->maxDepth});
     }
+    setAverageColors();
 }
 
 void QuadTree::setAverageColors() {
-    redVal = image->getAvgRedBlock(x, y, width, height);
-    greenVal = image->getAvgGreenBlock(x, y, width, height);
-    blueVal = image->getAvgBlueBlock(x, y, width, height);
+    if (isLeaf) {
+        redVal = image->getAvgRedBlock(x, y, width, height);
+        greenVal = image->getAvgGreenBlock(x, y, width, height);
+        blueVal = image->getAvgBlueBlock(x, y, width, height);
+    } else {
+        redVal = (topLeftTree->redVal + topRightTree->redVal + bottomLeftTree->redVal + bottomRightTree->redVal) / 4.0;
+        greenVal = (topLeftTree->greenVal + topRightTree->greenVal + bottomLeftTree->greenVal + bottomRightTree->greenVal) / 4.0;
+        blueVal = (topLeftTree->blueVal + topRightTree->blueVal + bottomLeftTree->blueVal + bottomRightTree->blueVal) / 4.0;
+    }
 }
+
 
 Image QuadTree::renderImage(int depth) {
     if (isLeaf || depth == 0) {
@@ -82,6 +86,14 @@ void QuadTree::printNodeInfo(int depth) const {
     cout << "----------------------------------------" << endl;
 }
 
+int QuadTree::getNodeCount() {
+    if (isLeaf) {
+        return 1;
+    } else {
+        return 1 + topLeftTree->getNodeCount() + topRightTree->getNodeCount() + bottomLeftTree->getNodeCount() + bottomRightTree->getNodeCount();
+    }
+}
+
 double QuadTree::binarySearchThreshold(const char* inputPath, const char* outputPath, int minBlockSize, Image& image, double (*errorMeasure)(const Image&, int, int, int, int), double low, double high, double targetCompressionRatio, int iterations) {
     double thresholdTolerance = 0.01;
 
@@ -99,12 +111,12 @@ double QuadTree::binarySearchThreshold(const char* inputPath, const char* output
 
     double currentCompressionRatio = compressedSize/originalSize; 
 
-    cout << "----------------------------------------" << endl;
-    cout << "Compressed image size: " << compressedSize << endl;
-    cout << "Compression Ratio: " << currentCompressionRatio << endl;
-    cout << "Target Compression Ratio: " << targetCompressionRatio << endl;
-    cout << "Threshold: " << midThreshold << endl;
-    cout << "Iterations left: " << iterations << endl;
+    // cout << "----------------------------------------" << endl;
+    // cout << "Compressed image size: " << compressedSize << endl;
+    // cout << "Compression Ratio: " << currentCompressionRatio << endl;
+    // cout << "Target Compression Ratio: " << targetCompressionRatio << endl;
+    // cout << "Threshold: " << midThreshold << endl;
+    // cout << "Iterations left: " << iterations << endl;
 
     if (abs(currentCompressionRatio - targetCompressionRatio) < thresholdTolerance) {
         return midThreshold;

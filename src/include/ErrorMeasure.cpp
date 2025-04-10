@@ -115,43 +115,62 @@ double ErrorMeasure::entropyErrorThreshold(const Image& image, int x1, int y1, i
     return avgEntropy;
 }
 
-double ErrorMeasure::SSIMThreshold(const Image& image, int x1, int y1, int x2, int y2) {
-    Image original;
-    original.loadImage("test/example.png");
+double ErrorMeasure::SSIMThreshold(const Image& image1, const Image& image2, int x1, int y1, int x2, int y2) {
+    // original.loadImage("test/example.png");
     // C1 from 8-bit, normalized (0-1)
-    double C1 = pow(0.01 * 1, 2);
+    double C1 = pow(0.01, 2);
 
     // C2 from 8-bit, normalized (0-1)
-    double C2 = pow(0.03 * 1, 2);
+    double C2 = pow(0.03, 2);
     
     // FOR CURRENT IMAGE
-    double redMean = image.Red().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    double greenMean = image.Green().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    double blueMean = image.Blue().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double redMean = image1.Red().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double greenMean = image1.Green().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double blueMean = image1.Blue().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    cout << "red mean: " << redMean << endl;
+    cout << "green mean: " << greenMean << endl;
+    cout << "blue mean: " << blueMean << endl;
 
-    double redVar = Variance(image.Red(), x1, y1, x2, y2);
-    double greenVar = Variance(image.Green(), x1, y1, x2, y2);
-    double blueVar = Variance(image.Blue(), x1, y1, x2, y2);
+    double redVar = Variance(image1.Red(), x1, y1, x2, y2);
+    double greenVar = Variance(image1.Green(), x1, y1, x2, y2);
+    double blueVar = Variance(image1.Blue(), x1, y1, x2, y2);
+    cout << "red variance: " << redVar << endl;
+    cout << "green variance: " << greenVar << endl;
+    cout << "blue variance: " << blueVar << endl;
 
     // FOR ORIGINAL IMAGE
-    double originalRedMean = original.Red().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    double originalGreenMean = original.Green().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
-    double originalBlueMean = original.Blue().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double originalRedMean = image2.Red().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double originalGreenMean = image2.Green().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    double originalBlueMean = image2.Blue().block(y1, x1, y2 - y1 + 1, x2 - x1 + 1).mean();
+    cout << "original red mean: " << originalRedMean << endl;
+    cout << "original green mean: " << originalGreenMean << endl;
+    cout << "original blue mean: " << originalBlueMean << endl;
 
-    double originalRedVar = Variance(original.Red(), x1, y1, x2, y2);
-    double originalGreenVar = Variance(original.Green(), x1, y1, x2, y2);
-    double originalBlueVar = Variance(original.Blue(), x1, y1, x2, y2);
+    double originalRedVar = Variance(image2.Red(), x1, y1, x2, y2);
+    double originalGreenVar = Variance(image2.Green(), x1, y1, x2, y2);
+    double originalBlueVar = Variance(image2.Blue(), x1, y1, x2, y2);
+    cout << "original red variance: " << originalRedVar << endl;
+    cout << "original green variance: " << originalGreenVar << endl;
+    cout << "original blue variance: " << originalBlueVar << endl;
 
     // SSIM
-    double redCov = Covariance(image.Red(), original.Red(), x1, y1, x2, y2);
-    double greenCov = Covariance(image.Green(), original.Green(), x1, y1, x2, y2);
-    double blueCov = Covariance(image.Blue(), original.Blue(), x1, y1, x2, y2);
+    double redCov = Covariance(image1.Red(), image2.Red(), x1, y1, x2, y2);
+    double greenCov = Covariance(image1.Green(), image2.Green(), x1, y1, x2, y2);
+    double blueCov = Covariance(image1.Blue(), image2.Blue(), x1, y1, x2, y2);
+    cout << "red covariance: " << redCov << endl;
+    cout << "green covariance: " << greenCov << endl;
+    cout << "blue covariance: " << blueCov << endl;
 
     double redSSIM = (2 * redMean * originalRedMean + C1) * (2 * redCov + C2) / ((pow(redMean, 2) + pow(originalRedMean, 2) + C1) * (redVar + originalRedVar + C2));
     double greenSSIM = (2 * greenMean * originalGreenMean + C1) * (2 * greenCov + C2) / ((pow(greenMean, 2) + pow(originalGreenMean, 2) + C1) * (greenVar + originalGreenVar + C2));
     double blueSSIM = (2 * blueMean * originalBlueMean + C1) * (2 * blueCov + C2) / ((pow(blueMean, 2) + pow(originalBlueMean, 2) + C1) * (blueVar + originalBlueVar + C2));
 
     double avgSSIM = (redSSIM + greenSSIM + blueSSIM) / 3.0;
+    cout << "SSIM: " << avgSSIM << endl;
+    cout << "Red SSIM: " << redSSIM << endl;
+    cout << "Green SSIM: " << greenSSIM << endl;
+    cout << "Blue SSIM: " << blueSSIM << endl;
+
     return avgSSIM;
 }
 

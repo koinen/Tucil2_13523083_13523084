@@ -37,6 +37,8 @@ class QuadTree {
 
         void buildTree(int minBlockSize, double thresholdValue, double (*errorMeasure)(const Image&, int, int, int, int));
 
+        void buildTreeSSIM(int minBlockSize, double thresholdValue);
+
         void setAverageColors();
 
         int getX() const { return x; }
@@ -55,6 +57,8 @@ class QuadTree {
         QuadTree* getBottomRightTree() const { return bottomRightTree; }
 
         Image renderImage(int depth);
+
+        int getNodeCount();
 
         static double binarySearchThreshold(const char* inputFile, const char* outputFile,int minBlockSize, Image& image, double (*errorMeasure)(const Image&, int, int, int, int), double low, double high, double targetCompressionRatio, int iterations = 10);
 

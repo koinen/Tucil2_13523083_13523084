@@ -10,8 +10,6 @@
 
 int main() {
 
-    // std::cout << "\x1B[2J\x1B[H"; // "clear console" (moves cursor to top left)
-    // ASCII named INVINCIQUADTREE
     cout << "\x1B[2J\x1B[H"; // "clear console" (moves cursor to top left)
 
     char* ASCII = u8R"(
@@ -67,7 +65,7 @@ int main() {
     }
 
     // Error method choice
-    cout << "-> Error Method Choice (1: Variance, 2: Mean Absolute Deviation, 3: Max Pixel Difference, 4: Entropy Error, 5: SSIM): ";
+    cout << "-> Error Method Choice (1: Variance, 2: Mean Absolute Deviation, 3: Max Pixel Difference, 4: Entropy Error): ";
     cin >> errorMethodChoice;
 
     if (errorMethodChoice == 1) {
@@ -78,10 +76,8 @@ int main() {
         errorMethod = ErrorMeasure::maxPixelDifferenceThreshold;
     } else if (errorMethodChoice == 4) {
         errorMethod = ErrorMeasure::entropyErrorThreshold;
-    } else if (errorMethodChoice == 5) {
-        errorMethod = ErrorMeasure::SSIMThreshold;
     } else {
-        cout << "Invalid choice. YOU HAVE TO CHOOSE BETWEEN 1 and 5, MARK!" << endl;
+        cout << "Invalid choice. YOU HAVE TO CHOOSE BETWEEN 1 and 4, MARK!" << endl;
         return 1;
     }
 
@@ -137,9 +133,8 @@ int main() {
         cout << "Invalid block size. YOU HAVE TO CHOOSE A BLOCK SIZE GREATER THAN OR EQUAL TO 1, MARK!" << endl;
         return 1;
     }
-
-    cout << "-> Absolute Path to Output Image: ";
     cin.ignore(); // Clear the newline character from the input buffer
+    cout << "-> Absolute Path to Output Image: ";
     cin.getline(outputImagePath, 256);
     cout << "-> Absolute Path to Output GIF: ";
     cin.getline(outputGIFPath, 256);
@@ -169,6 +164,8 @@ int main() {
     Image renderedImage = quadTree.renderImage(quadTree.getMaxDepth()); // Render image from quadtree
     renderedImage.saveImage(outputImagePath); // Save image to file
     cout << "Image saved successfully." << endl;
+    auto end1 = chrono::high_resolution_clock::now(); // End timer
+    auto duration1 = chrono::duration_cast<chrono::milliseconds>(end1 - start).count(); // Calculate duration in milliseconds
 
     if(targetCompressionRatio > 0){
         // Binary search for threshold value
@@ -189,15 +186,16 @@ int main() {
 
 
 
-    auto end = chrono::high_resolution_clock::now(); // End timer
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count(); // Calculate duration in milliseconds
+    auto end2 = chrono::high_resolution_clock::now(); // End timer
+    auto duration2 = chrono::duration_cast<chrono::milliseconds>(end2 - start).count(); // Calculate duration in milliseconds
     cout << "=======================================================" << endl;
-    cout << "Compression completed in " << duration << " milliseconds." << endl;
+    cout << "Image compression completed in " << duration1 << " milliseconds." << endl;
+    cout << "GIF creation completed in " << duration2 << " milliseconds." << endl;
     cout << "Previous image size: " << ErrorMeasure::getFileSize(inputImagePath) << " KB" << endl;
     cout << "Compressed image size: " << ErrorMeasure::getFileSize(outputImagePath) << " KB" << endl;
     cout << "Compression ratio: " << (ErrorMeasure::getFileSize(outputImagePath) / ErrorMeasure::getFileSize(inputImagePath)) * 100 << "%" << endl;
     cout << "Depth of quadtree: " << quadTree.getMaxDepth() << endl;
-    // cout << "Number of nodes in quadtree: " << quadTree.getMaxDepth() + 1 << endl;
+    cout << "Number of nodes in quadtree: " << quadTree.getNodeCount() << endl;
     cout << "Compressed image saved to: " << outputImagePath << endl;
     cout << "GIF saved to: " << outputGIFPath << endl;
     cout << "=======================================================" << endl;
