@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 class QuadTree {
     private:
         int x, y; // Coordinates of the top-left corner of the block
@@ -54,6 +55,8 @@ class QuadTree {
         QuadTree* getBottomRightTree() const { return bottomRightTree; }
 
         Image renderImage(int depth);
+
+        static double binarySearchThreshold(const char* inputFile, const char* outputFile,int minBlockSize, Image& image, double (*errorMeasure)(const Image&, int, int, int, int), double low, double high, double targetCompressionRatio, int iterations = 10);
 
         void printNodeInfo(int depth) const;
 };

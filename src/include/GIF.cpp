@@ -53,7 +53,7 @@ public:
             avgG /= (r - l + 1);
             avgB /= (r - l + 1);
             res->emplace_back(avgR, avgG, avgB);
-            std::cout << "Bucket " << res->size() << ": (" << avgR << ", " << avgG << ", " << avgB << ")" << std::endl;
+            // std::cout << "Bucket " << res->size() << ": (" << avgR << ", " << avgG << ", " << avgB << ")" << std::endl;
             return;
         }
         int mid = (l + r) / 2;

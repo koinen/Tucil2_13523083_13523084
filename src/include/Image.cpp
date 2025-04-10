@@ -36,10 +36,10 @@ Image::Image(const Image& topLeft, const Image& topRight, const Image& bottomLef
     blue.block(topLeft.height, topLeft.width, bottomRight.height, bottomRight.width) = bottomRight.blue;
 }
 
-void Image::loadImage(const char* filename) {
-    unsigned char* img = stbi_load(filename, &width, &height, nullptr, 3);
+void Image::loadImage(const char* inputPath) {
+    unsigned char* img = stbi_load(inputPath, &width, &height, nullptr, 3);
     if (img == nullptr) {
-        cerr << "Failed to load image: " << filename << endl;
+        cerr << "Failed to load image: " << inputPath << endl;
         return;
     }
 
@@ -57,7 +57,7 @@ void Image::loadImage(const char* filename) {
     stbi_image_free(img);
 }
 
-void Image::saveImage(const char* filename) const {
+void Image::saveImage(const char* outputPath) const {
     int channels = 3;
     unsigned char* img = new unsigned char[width * height * channels];
 
@@ -70,8 +70,8 @@ void Image::saveImage(const char* filename) const {
         }
     }
 
-    if (!stbi_write_png(filename, width, height, channels, img, width * channels)) {
-        cerr << "Failed to save image: " << filename << endl;
+    if (!stbi_write_png(outputPath, width, height, channels, img, width * channels)) {
+        cerr << "Failed to save image: " << outputPath << endl;
     }
 
     delete[] img;

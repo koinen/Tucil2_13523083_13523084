@@ -82,3 +82,36 @@ void QuadTree::printNodeInfo(int depth) const {
     cout << "----------------------------------------" << endl;
 }
 
+double QuadTree::binarySearchThreshold(const char* inputPath, const char* outputPath, int minBlockSize, Image& image, double (*errorMeasure)(const Image&, int, int, int, int), double low, double high, double targetCompressionRatio, int iterations) {
+    double thresholdTolerance = 0.01;
+
+    if(iterations <= 0) {
+        return (low + high) / 2.0;
+    }
+
+    double midThreshold = (low + high) / 2.0;
+    QuadTree quadTree(&image);
+    quadTree.buildTree(minBlockSize, midThreshold, errorMeasure);
+    Image renderedImage = quadTree.renderImage(quadTree.getMaxDepth());
+    renderedImage.saveImage(outputPath);
+    double originalSize = ErrorMeasure::getFileSize(inputPath);
+    double compressedSize = ErrorMeasure::getFileSize(outputPath);
+
+    double currentCompressionRatio = compressedSize/originalSize; 
+
+    cout << "----------------------------------------" << endl;
+    cout << "Compressed image size: " << compressedSize << endl;
+    cout << "Compression Ratio: " << currentCompressionRatio << endl;
+    cout << "Target Compression Ratio: " << targetCompressionRatio << endl;
+    cout << "Threshold: " << midThreshold << endl;
+    cout << "Iterations left: " << iterations << endl;
+
+    if (abs(currentCompressionRatio - targetCompressionRatio) < thresholdTolerance) {
+        return midThreshold;
+    } else if (currentCompressionRatio < targetCompressionRatio) {
+        return binarySearchThreshold(inputPath, outputPath, minBlockSize, image, errorMeasure, low, midThreshold, targetCompressionRatio, iterations - 1);
+    } else {
+        return binarySearchThreshold(inputPath, outputPath, minBlockSize, image, errorMeasure, midThreshold, high, targetCompressionRatio, iterations - 1);
+    }
+}
+

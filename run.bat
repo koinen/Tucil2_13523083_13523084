@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+
 set "PROJECT_DIR=%CD%"
 set "BUILD_DIR=%PROJECT_DIR%\bin\build"
 set "EXE_DIR=%PROJECT_DIR%\bin"
