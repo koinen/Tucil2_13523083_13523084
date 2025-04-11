@@ -9,29 +9,32 @@ Program ini membutuhkan tools dan dependency berikut untuk proses build:
 - [vcpkg](https://github.com/microsoft/vcpkg)
 - [Ninja](https://ninja-build.org/)
 
-Pastikan semua requirement di atas telah terinstal dan tersedia di environment PATH.
+Pastikan semua requirement di atas telah terinstal dan tersedia di environment variable PATH.
+Untuk vcpkg, tambahkan VCPKG_ROOT pada environment variable yang mengarah ke folder vcpkg.
 
 ## Cara Mengkompilasi Program  
 Build dapat dilakukan dengan menjalankan skrip berikut:
 
-- **Windows**:  
-  Jalankan `./run.bat` di Command Prompt atau PowerShell.
+- **Windows**: </br>
+  > Untuk memastikan kelancaran proses build, disarankan mengaktifkan dan menyesuaikan path vcvars64.bat di build.bat
+  
+  Jalankan `./build.bat` di Command Prompt atau PowerShell.
   
 - **Linux / WSL**:  
-  Jalankan `./run.sh` di terminal.
+  Jalankan `./build.sh` di terminal.
 
-Setelah proses build selesai, file executable `App.exe` akan tersedia di folder `bin`.
+Setelah proses build selesai, file executable `app.exe` akan tersedia di folder `bin`.
 
 ## Cara Menjalankan dan Menggunakan Program  
 Setelah build selesai, jalankan program melalui terminal/command prompt dengan format:
 
-```bash
-./bin/App.exe
+```cmd
+./bin/app.exe
 ```
 
 Contoh:
 ```bash
-./bin/App.exe
+./bin/app
 ```
 
 Setelah program berhasil dimulai, masukkan parameter-parameter berikut sesuai kebutuhan:
