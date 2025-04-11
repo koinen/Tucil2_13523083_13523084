@@ -65,7 +65,7 @@ int main() {
     }
 
     // Error method choice
-    cout << "-> Error Method Choice (1: Variance, 2: Mean Absolute Deviation, 3: Max Pixel Difference, 4: Entropy Error): ";
+    cout << "-> Error Method Choice (1: Variance, 2: Mean Absolute Deviation, 3: Max Pixel Difference, 4: Entropy Error, 5: SSIM): ";
     cin >> errorMethodChoice;
 
     if (errorMethodChoice == 1) {
@@ -76,6 +76,8 @@ int main() {
         errorMethod = ErrorMeasure::maxPixelDifferenceThreshold;
     } else if (errorMethodChoice == 4) {
         errorMethod = ErrorMeasure::entropyErrorThreshold;
+    } else if (errorMethodChoice == 5) {
+        errorMethod = ErrorMeasure::SSIMThreshold;
     } else {
         cout << "Invalid choice. YOU HAVE TO CHOOSE BETWEEN 1 and 4, MARK!" << endl;
         return 1;
@@ -118,6 +120,7 @@ int main() {
             cout << "Invalid threshold. YOU HAVE TO CHOOSE BETWEEN 0.0 and 1.0, MARK!" << endl;
             return 1;
         }
+        thresholdValue *= -1; // Invert the threshold value for SSIM
     }
 
     cout << "-> Target Compression Ratio (0.0 - 1.0): ";
@@ -161,12 +164,6 @@ int main() {
     Image image(inputImagePath); // Load image
     QuadTree quadTree(&image); // Create quadtree
 
-    Image renderedImage = quadTree.renderImage(quadTree.getMaxDepth()); // Render image from quadtree
-    renderedImage.saveImage(outputImagePath); // Save image to file
-    cout << "Image saved successfully." << endl;
-    auto end1 = chrono::high_resolution_clock::now(); // End timer
-    auto duration1 = chrono::duration_cast<chrono::milliseconds>(end1 - start).count(); // Calculate duration in milliseconds
-
     if(targetCompressionRatio > 0){
         // Binary search for threshold value
         thresholdValue = QuadTree::binarySearchThreshold(inputImagePath, outputImagePath, minBlockSize, image, errorMethod, minThreshold, maxThreshold, targetCompressionRatio);
@@ -176,6 +173,9 @@ int main() {
     quadTree.buildTree(minBlockSize, thresholdValue, errorMethod);
     Image compressedImage = quadTree.renderImage(quadTree.getMaxDepth()); // Render image from quadtree
     compressedImage.saveImage(outputImagePath); // Save image to file
+    cout << "Image saved successfully." << endl;
+    auto end1 = chrono::high_resolution_clock::now(); // End timer
+    auto duration1 = chrono::duration_cast<chrono::milliseconds>(end1 - start).count(); // Calculate duration in milliseconds
     Image *frames = new Image[quadTree.getMaxDepth() + 1]; // Create frames for GIF
     for (int i = 0; i <= quadTree.getMaxDepth(); i++) {
         frames[i] = quadTree.renderImage(i); // Render image from quadtree

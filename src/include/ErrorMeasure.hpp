@@ -22,7 +22,7 @@ public:
     static double meanAbsoluteDeviationThreshold(const Image& image, int x1, int y1, int x2, int y2);//0.0-0.5
     static double maxPixelDifferenceThreshold(const Image& image, int x1, int y1, int x2, int y2);//0.0-1.0
     static double entropyErrorThreshold(const Image& image, int x1, int y1, int x2, int y2);//0.0-8.0
-    static double SSIMThreshold(const Image& image1, const Image& image2, int x1, int y1, int x2, int y2);//0.0-1.0
+    static double SSIMThreshold(const Image& image1, int x1, int y1, int x2, int y2);//0.0-1.0
 
     static double getFileSize(const char* filename);
 };

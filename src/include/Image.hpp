@@ -20,6 +20,7 @@ class Image {
         Image(const char* filename);
         Image(const int width, const int height);
         Image(const Image& topLeft, const Image& topRight, const Image& bottomLeft, const Image& bottomRight);
+        Image(const Image& image); // Copy constructor
 
         void loadImage(const char* filename);
         void saveImage(const char* filename) const;

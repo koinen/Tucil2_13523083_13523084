@@ -37,8 +37,6 @@ class QuadTree {
 
         void buildTree(int minBlockSize, double thresholdValue, double (*errorMeasure)(const Image&, int, int, int, int));
 
-        void buildTreeSSIM(int minBlockSize, double thresholdValue);
-
         void setAverageColors();
 
         int getX() const { return x; }

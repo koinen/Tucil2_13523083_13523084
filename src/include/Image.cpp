@@ -6,6 +6,8 @@ Image::Image(const char* filename) {
     loadImage(filename);
 }
 
+Image::Image(const Image& image) : width(image.width), height(image.height), red(image.red), green(image.green), blue(image.blue) {}
+
 Image::Image(const int width, const int height) : width(width), height(height) {
     red.resize(height, width);
     green.resize(height, width);
@@ -69,9 +71,17 @@ void Image::saveImage(const char* outputPath) const {
             // cout << "Red: " << red(i, j) << ", Green: " << green(i, j) << ", Blue: " << blue(i, j) << endl;
         }
     }
+    string file(outputPath);
 
-    if (!stbi_write_png(outputPath, width, height, channels, img, width * channels)) {
-        cerr << "Failed to save image: " << outputPath << endl;
+    if (file.substr(file.size() - 3) == "png") {
+        if (!stbi_write_png(outputPath, width, height, channels, img, width * channels)) {
+            cerr << "Failed to save image: " << outputPath << endl;
+        }
+    }
+    else {
+        if (!stbi_write_jpg(outputPath, width, height, channels, img, 100)) {
+            cerr << "Failed to save image: " << outputPath << endl;
+        }
     }
 
     delete[] img;
