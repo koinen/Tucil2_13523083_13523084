@@ -7,8 +7,8 @@ Program ini membutuhkan tools dan dependency berikut untuk proses build:
 
 - [CMake](https://cmake.org/)
 - [vcpkg](https://github.com/microsoft/vcpkg)
-- [Ninja](https://ninja-build.org/ atau ```sudo apt install ninja```)
-- [pkg-config], untuk OS unix-like (```sudo apt-get install pkg-config```)
+- [Ninja](https://ninja-build.org/) atau ```sudo apt install ninja```
+- pkg-config, untuk OS unix-like ```sudo apt-get install pkg-config```
 
 Pastikan semua requirement di atas telah terinstal dan tersedia di environment variable PATH.
 Untuk vcpkg, tambahkan VCPKG_ROOT pada environment variable yang mengarah ke folder vcpkg.
