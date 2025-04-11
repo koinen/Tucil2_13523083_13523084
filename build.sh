@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Exit on error
 set -e
 # Set project and build directories
@@ -19,15 +17,8 @@ mkdir -p "$BUILD_DIR"
 cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" \
   -G "Ninja" \
   -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN_FILE" \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=Release \
+  -DVCPKG_TARGET_TRIPLET=x64-linux \
 
 # Build the project
 cmake --build "$BUILD_DIR" --config Release
-
-# Run the executable if it exists
-if [[ -x "$EXECUTABLE" ]]; then
-  echo "Running: $EXECUTABLE"
-  "$EXECUTABLE"
-else
-  echo "ERROR: Executable not found at $EXECUTABLE"
-fi
